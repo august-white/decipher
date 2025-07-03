@@ -1,95 +1,58 @@
-import { View, Text, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { XMLParser } from 'fast-xml-parser';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import PlayDropdown from 'components/PlayDropdown';
-import Letter from 'components/Letter'
+import { Book, ChevronDown, ChevronUp } from 'lucide-react-native';
 
 const HomeScreen = ({ navigation }) => {
-    const [NYTarticles, setNYTArticles] = useState([]);
-    const [NYTTopStoriesShown, setNYTTopStoriesShown] = useState(false);
-    const [uselessFact, setUselessFact] = useState('');
-    const [uselessFactShown, setUselessFactShown] = useState(false);
+	const [playDropdownOpen, setPlayDropdownOpen] = useState(false);
 
-    useEffect(() => {
-        fetchNYTRSS();
-        fetchUselessFact();
-    }, []);
+	const options = [
+		{ label: 'Random Facts', slug: 'random-fact' },
+		{ label: 'New York Times Top Articles', slug: 'nyt-top-story' },
+		{ label: 'Famous Quotes', slug: 'famous-quote' },
+	  ];
 
-    const fetchNYTRSS = async () => {
-        try {
-            const response = await fetch('https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml');
-            const text = await response.text();
-            const parser = new XMLParser({
-                ignoreAttributes: false,
-                attributeNamePrefix: '@_',
-            });
-            const jsonObj = parser.parse(text);
-            const items = jsonObj.rss.channel.item;
-
-            const snippets = items.map(item => ({
-                title: item.title,
-                snippet: item.description,
-                link: item.link,
-            }));
-
-            setNYTArticles(snippets);
-        } catch (e) {
-            console.error('Failed to fetch or parse RSS:', e);
-        }
-    };
-
-    const fetchUselessFact = async (category = null) => {
-        try {
-            const url = category
-                ? `https://uselessfacts.jsph.pl/api/v2/facts/random?category=${category}`
-                : 'https://uselessfacts.jsph.pl/api/v2/facts/random';
-
-            const response = await fetch(url);
-            const data = await response.json();
-            setUselessFact(data.text);
-        } catch (e) {
-            console.error('Failed to fetch useless fact:', e);
-        }
-    };
-
-
-    return (
-      <SafeAreaView className="flex-1">
-        <View className="flex-1 px-4 py-6">
-          <View className="mb-6 flex-row items-center justify-between">
-            <Text className="text-2xl font-bold">Home</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Dictionary')}
-              className="rounded-md bg-purple-500 px-4 py-2">
-              <Text className="font-semibold text-white">Go to Dictionary</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* NYT Section */}
-          <View className="mb-2 flex-row items-center">
-            <Text className="mr-4 text-lg font-semibold">NYT Top Stories</Text>
-            <TouchableOpacity
-              onPress={() => setNYTTopStoriesShown(!NYTTopStoriesShown)}
-              className="rounded-md bg-gray-300 p-2">
-              {NYTTopStoriesShown ? <ChevronUp /> : <ChevronDown />}
-            </TouchableOpacity>
-          </View>
-
-          {NYTTopStoriesShown && (
-            <View className="mb-4 max-h-72">
-              {NYTarticles.map((article, index) => (
-                <View key={index} className="mb-4 rounded-md bg-gray-100 p-4">
-                  <Text className="mb-1 text-base font-bold">{article.title}</Text>
-                  <Text className="text-sm text-gray-700">{article.snippet}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-          <PlayDropdown />
-        </View>
-      </SafeAreaView>
-    );
+	return (
+		<SafeAreaView className="flex-1 items-end">
+			<View className="flex flex-row items-center px-6">
+				<View className="flex w-1/2 flex-row items-center">
+					<TouchableOpacity
+						className="rounded-md bg-purple-200 p-3"
+						onPress={() => navigation.navigate('Dictionary')}
+					>
+						<Book />
+					</TouchableOpacity>
+					<Text className="mx-6 w-1/2 justify-center text-center text-xl font-bold">Home</Text>
+				</View>
+				{/* play dropdown */}
+				<View className="w-1/2">
+					<TouchableOpacity
+						onPress={() => setPlayDropdownOpen(!playDropdownOpen)}
+						className="flex-row items-center justify-between rounded-md bg-purple-200 px-4 py-3"
+					>
+						<Text className="text-lg font-semibold text-purple-900">Play</Text>
+						{playDropdownOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+					</TouchableOpacity>
+				</View>
+			</View>
+			{playDropdownOpen && (
+				<View className="w-1/2 mt-2 mr-4 rounded-md bg-white shadow">
+					{options.map((option) => (
+						<TouchableOpacity
+							key={option.slug}
+							className="border-b border-gray-200 px-4 py-3"
+							onPress={() => {
+								setPlayDropdownOpen(false);
+								navigation.navigate('Play', { slug: option.slug });
+							}}
+						>
+							<Text className="text-gray-800">{option.label}</Text>
+						</TouchableOpacity>
+					))}
+				</View>
+			)}
+		</SafeAreaView>
+	);
 };
 
 export default HomeScreen;

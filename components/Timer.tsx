@@ -49,13 +49,13 @@ const Timer = () => {
             <Text className="text-2xl font-bold text-center w-1/3 h-full">{formatTime(seconds)}</Text>
             <TouchableOpacity
                 onPress={() => setRunning((r) => !r)}
-                className="p-2 rounded-lg bg-gray-200 mx-1 w-10 h-10"
+                className="p-2 rounded-lg bg-purple-300 mx-1 w-10 h-10 items-center"
             >
                 {running ? <Pause fill={'black'}/> : <Play fill={'black'} />}
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={handleRestart}
-                className="p-2 rounded-lg bg-gray-200 mx-1 w-10 h-10"
+                className="p-2 rounded-lg bg-purple-300 mx-1 w-10 h-10 items-center"
             >
                 <RotateCcw strokeWidth={3}/>
             </TouchableOpacity>

@@ -4,11 +4,17 @@ import { View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-na
 import { XMLParser } from 'fast-xml-parser';
 import Constants from 'expo-constants';
 import Word from 'components/Word';
-import { PenLine } from 'lucide-react-native';
+import { Book, Home, PenLine } from 'lucide-react-native';
 import Timer from 'components/Timer';
 
-const PlayScreen = ({ route }) => {
+const PlayScreen = ({ route, navigation }) => {
     const { slug } = route.params;
+
+    const formattedSlug = slug == 'random-fact'?
+        'Random Facts' :
+            slug == 'nyt-top-story'?
+                'New York Times' :
+                    'Famous Quotes'
 
     const [text, setText] = useState([]);
 
@@ -155,45 +161,57 @@ const PlayScreen = ({ route }) => {
 
     return (
         <SafeAreaView className="flex-1 items-center justify-center p-4">
-        <View className="flex flex-row items-center px-6">
-            <Text className="ml-6 text-xl font-bold text-center justify-center w-1/2">Play Screen</Text>
-        </View>
-        <ScrollView className="w-full mt-8" contentContainerStyle={{ alignItems: 'center' }}>
-            <View className="w-full flex-row flex-wrap justify-left pl-4 pr-2">
-            {text.map((wordArr, idx) => (
-                <Word
-                key={idx}
-                letters={wordArr}
-                highlightedLetter={highlightedLetter}
-                setHighlightedLetter={setHighlightedLetter}
-                handleType={handleType}
-                />
-            ))}
-            </View>
-        </ScrollView>
-        <View className="flex flex-row m-4">
-            <View className="w-full rounded-t-lg rounded-b-3xl bg-gray-300 p-2 flex flex-row items-center justify-center">
-            <Timer />
-            <View className="flex flex-row w-2/6 justify-center items-center">
-                <PenLine fill={typeColor} stroke={typeColor} />
+            <View className="flex flex-row items-center">
                 <TouchableOpacity
-                className="rounded-full h-6 w-6 bg-[#ffff00] mx-2"
-                onPress={() => setTypeColor('yellow')}
-                />
+                    className='rounded-md bg-purple-200 p-2'
+                    onPress={() => navigation.navigate('Home')}
+                >
+                    <Home />
+                </TouchableOpacity>
+                <Text className="mx-6 text-xl font-bold text-center justify-center w-1/2">{`Play - ${formattedSlug}`}</Text>
                 <TouchableOpacity
-                className="rounded-full h-6 w-6 bg-[#008000] mr-2"
-                onPress={() => setTypeColor('green')}
-                />
-                <TouchableOpacity
-                className="rounded-full h-6 w-6 bg-black"
-                onPress={() => setTypeColor('black')}
-                />
+                    className='rounded-md bg-purple-200 p-2'
+                    onPress={() => navigation.navigate('Dictionary')}
+                >
+                    <Book />
+                </TouchableOpacity>
             </View>
-            <Text className="w-1/6 font-bold text-center text-2xl">
-                {highlightedLetter || '_'} - {highlightedCount}
-            </Text>
+            <ScrollView className="w-full mt-8" contentContainerStyle={{ alignItems: 'center' }}>
+                <View className="w-full flex-row flex-wrap justify-left pl-4 pr-2">
+                {text.map((wordArr, idx) => (
+                    <Word
+                    key={idx}
+                    letters={wordArr}
+                    highlightedLetter={highlightedLetter}
+                    setHighlightedLetter={setHighlightedLetter}
+                    handleType={handleType}
+                    />
+                ))}
+                </View>
+            </ScrollView>
+            <View className="flex flex-row m-4">
+                <View className="w-full rounded-t-lg rounded-b-3xl bg-purple-200 p-2 flex flex-row items-center justify-center">
+                    <Timer />
+                    <View className="flex flex-row w-2/6 justify-center items-center">
+                        <PenLine fill={typeColor} stroke={typeColor} />
+                        <TouchableOpacity
+                        className="rounded-full h-6 w-6 bg-[#ffff00] mx-2"
+                        onPress={() => setTypeColor('yellow')}
+                        />
+                        <TouchableOpacity
+                        className="rounded-full h-6 w-6 bg-[#008000] mr-2"
+                        onPress={() => setTypeColor('green')}
+                        />
+                        <TouchableOpacity
+                        className="rounded-full h-6 w-6 bg-black"
+                        onPress={() => setTypeColor('black')}
+                        />
+                    </View>
+                    <Text className="w-1/6 font-bold text-center text-2xl">
+                        {highlightedLetter || '_'} - {highlightedCount}
+                    </Text>
+                </View>
             </View>
-        </View>
         </SafeAreaView>
     );
 };

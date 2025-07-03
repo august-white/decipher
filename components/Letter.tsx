@@ -37,7 +37,7 @@ const Letter = ({
             <TextInput
                 value={topLetter || ''}
                 onChangeText={(value) => handleType(value, bottomLetter)}
-                className="text-md font-bold px-2 pt-3"
+                className="text-md font-bold px-2 pt-3 text-center"
                 style={{
                     color: color || 'black',
                 }}
